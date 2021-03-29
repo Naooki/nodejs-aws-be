@@ -1,53 +1,58 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
 
+import { getProductById } from "src/services";
+
 export const getProductByIdHandler: APIGatewayProxyHandler = async (
   event,
   _context
 ) => {
   const { productId } = event.pathParameters;
 
-  return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify(
-      {
-        message: "Success",
-        product: `Product ID: ${productId}`,
-      },
-      null,
-      2
-    ),
-  };
+  try {
+    const product = await getProductById(productId);
 
-  // try {
-  //   const product = await getProductById(productId);
-  //   return {
-  //     statusCode: 200,
-  //     headers: {
-  //       "Access-Control-Allow-Origin": "*",
-  //     },
-  //     body: JSON.stringify(
-  //       {
-  //         message: "Success",
-  //         product,
-  //       },
-  //       null,
-  //       2
-  //     ),
-  //   };
-  // } catch (err) {
-  //   return {
-  //     statusCode: 400,
-  //     body: JSON.stringify(
-  //       {
-  //         message: "Error",
-  //       },
-  //       null,
-  //       2
-  //     ),
-  //   };
-  // }
+    if (product) {
+      const statusCode = 200;
+      return {
+        statusCode,
+        body: JSON.stringify(
+          {
+            message: "Success",
+            statusCode,
+            product,
+          },
+          null,
+          2
+        ),
+      };
+    } else {
+      const statusCode = 404;
+      return {
+        statusCode,
+        body: JSON.stringify(
+          {
+            message: "Product Not Found",
+            statusCode,
+          },
+          null,
+          2
+        ),
+      };
+    }
+  } catch (err) {
+    const statusCode = 400;
+
+    return {
+      statusCode,
+      body: JSON.stringify(
+        {
+          message: "Error",
+          statusCode,
+        },
+        null,
+        2
+      ),
+    };
+  }
 };

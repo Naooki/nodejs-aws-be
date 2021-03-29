@@ -2,6 +2,8 @@ const path = require('path');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 /*
 This line is only required if you are specifying `TS_NODE_PROJECT` for whatever reason.
  */
@@ -15,7 +17,8 @@ module.exports = {
   resolve: {
     extensions: ['.mjs', '.json', '.ts'],
     symlinks: false,
-    cacheWithContext: false
+    cacheWithContext: false,
+    plugins: [new TsconfigPathsPlugin({})]
   },
   output: {
     libraryTarget: 'commonjs',

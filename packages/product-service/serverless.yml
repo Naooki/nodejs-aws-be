@@ -30,9 +30,9 @@ functions:
       - http:
           method: get
           path: products/{productId}
-  # getProductsList:
-  #   handler: src/handlers.getProductsListHandler
-  #   events:
-  #     - http:
-  #         method: get
-  #         path: products
+  getProductsList:
+    handler: src/handlers/index.getProductsListHandler
+    events:
+      - http:
+          method: get
+          path: products
