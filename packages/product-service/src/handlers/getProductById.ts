@@ -8,6 +8,9 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
   _context
 ) => {
   const { productId } = event.pathParameters;
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+  };
 
   try {
     const product = await getProductById(productId);
@@ -16,6 +19,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
       const statusCode = 200;
       return {
         statusCode,
+        headers,
         body: JSON.stringify(
           {
             message: "Success",
@@ -30,6 +34,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
       const statusCode = 404;
       return {
         statusCode,
+        headers,
         body: JSON.stringify(
           {
             message: "Product Not Found",
@@ -45,6 +50,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
 
     return {
       statusCode,
+      headers,
       body: JSON.stringify(
         {
           message: "Error",

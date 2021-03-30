@@ -8,12 +8,16 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
   _context
 ) => {
   const params = event.queryStringParameters || {};
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+  };
 
   try {
     const products = await getProducts(params);
     const statusCode = 200;
     return {
       statusCode,
+      headers,
       body: JSON.stringify(
         {
           message: "Success",
@@ -29,6 +33,7 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
 
     return {
       statusCode,
+      headers,
       body: JSON.stringify(
         {
           message: "Error",
