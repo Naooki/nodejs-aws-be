@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Product",
+  "description": "A product from a catalog",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The unique identifier for a product",
+      "type": "string"
+    },
+    "title": {
+      "description": "The title of a product",
+      "type": "string"
+    },
+    "description": {
+      "description": "The description of a product",
+      "type": "string"
+    },
+    "price": {
+      "description": "The price of a product",
+      "type": "integer"
+    },
+    "count": {
+      "description": "The amount of products",
+      "type": "integer"
+    }
+    
+  }
+}

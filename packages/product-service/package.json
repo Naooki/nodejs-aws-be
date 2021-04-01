@@ -17,6 +17,7 @@
     "@types/aws-lambda": "^8.10.71",
     "@types/node": "^14.14.25",
     "serverless": "^2.23.0",
+    "serverless-aws-documentation": "^1.1.0",
     "serverless-webpack": "^5.3.5",
     "ts-loader": "^8.0.15",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
