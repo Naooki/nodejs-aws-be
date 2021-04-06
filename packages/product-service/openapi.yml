@@ -1,0 +1,102 @@
+---
+swagger: "2.0"
+info:
+  version: "2021-04-01T15:39:37Z"
+  title: "dev-product-service"
+host: "uhvqepz8rb.execute-api.eu-west-1.amazonaws.com"
+basePath: "/dev"
+schemes:
+- "https"
+paths:
+  /products:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "search"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetProductsResponse"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /products/{productId}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "productId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetProductResponse"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+  GetProductResponse:
+    type: "object"
+    properties:
+      product:
+        $ref: "#/definitions/Product"
+      message:
+        type: "string"
+      statusCode:
+        type: "integer"
+  GetProductsResponse:
+    type: "object"
+    properties:
+      product:
+        type: "array"
+        items:
+          $ref: "#/definitions/Product"
+      message:
+        type: "string"
+      statusCode:
+        type: "integer"
+  Product:
+    type: "object"
+    properties:
+      price:
+        type: "integer"
+        description: "The price of a product"
+      count:
+        type: "integer"
+        description: "The amount of products"
+      description:
+        type: "string"
+        description: "The description of a product"
+      id:
+        type: "string"
+        description: "The unique identifier for a product"
+      title:
+        type: "string"
+        description: "The title of a product"
+    title: "Product"
+    description: "A product from a catalog"
+  ErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      statusCode:
+        type: "integer"
