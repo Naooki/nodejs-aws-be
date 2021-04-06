@@ -39,7 +39,7 @@ describe("getProductById", () => {
     });
   });
 
-  it("should return 400 error when the product not found", async () => {
+  it("should return 400 error when service fails", async () => {
     const event: APIGatewayProxyEvent = {
       pathParameters: { productId: "test-product-id" },
     } as any;
