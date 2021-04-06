@@ -1,8 +1,13 @@
 ---
 swagger: "2.0"
 info:
-  version: "2021-04-01T15:39:37Z"
+  description: "Products API for NodeJS AWS GMP"
+  version: "2021-04-06T20:03:08Z"
   title: "dev-product-service"
+  contact:
+    name: "Yahor Sheinikau"
+    url: "https://github.com/naooki"
+    email: "sheynikovea@gmail.com"
 host: "uhvqepz8rb.execute-api.eu-west-1.amazonaws.com"
 basePath: "/dev"
 schemes:
@@ -10,15 +15,19 @@ schemes:
 paths:
   /products:
     get:
+      summary: "Get Products"
+      description: "Returns a list of porducts"
       produces:
       - "application/json"
       parameters:
       - name: "search"
         in: "query"
+        description: "The string to search for in item titles"
         required: false
         type: "string"
       - name: "limit"
         in: "query"
+        description: "The limit number of items to return"
         required: false
         type: "string"
       responses:
@@ -32,11 +41,14 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /products/{productId}:
     get:
+      summary: "Get Product By ID"
+      description: "Returns a product by ID"
       produces:
       - "application/json"
       parameters:
       - name: "productId"
         in: "path"
+        description: "The ID of the Product to find"
         required: true
         type: "string"
       responses:
@@ -62,6 +74,7 @@ definitions:
         type: "string"
       statusCode:
         type: "integer"
+    description: "Get Product Response Model"
   GetProductsResponse:
     type: "object"
     properties:
@@ -73,6 +86,7 @@ definitions:
         type: "string"
       statusCode:
         type: "integer"
+    description: "Get Products Response Model"
   Product:
     type: "object"
     properties:
@@ -92,7 +106,7 @@ definitions:
         type: "string"
         description: "The title of a product"
     title: "Product"
-    description: "A product from a catalog"
+    description: "Product model"
   ErrorResponse:
     type: "object"
     properties:
@@ -100,3 +114,4 @@ definitions:
         type: "string"
       statusCode:
         type: "integer"
+    description: "Generic error response"

@@ -19,7 +19,7 @@ custom:
     resources:
       - path: "products"
         description: "This is the description for some/path"
-      - path: "products/:productId"
+      - path: "products/productId"
         description: "This is the description for some/other/path"
     models:
       - name: "Product"
