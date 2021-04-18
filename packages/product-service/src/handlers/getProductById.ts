@@ -46,7 +46,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
       };
     }
   } catch (err) {
-    const statusCode = 400;
+    const statusCode = 500;
 
     return {
       statusCode,

@@ -29,7 +29,7 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
       ),
     };
   } catch ({ err, params }) {
-    const statusCode = 400;
+    const statusCode = 500;
 
     return {
       statusCode,

@@ -37,7 +37,7 @@ describe("getProducts", () => {
     const body = JSON.parse(resp.body);
     expect(body).toEqual({
       message: "Error",
-      statusCode: 400,
+      statusCode: 500,
       err: 'test-error',
       params: {}
     });
