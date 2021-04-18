@@ -1,0 +1,134 @@
+service: product-service
+
+frameworkVersion: "2"
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  documentation:
+    api:
+      info:
+        version: "0.1"
+        title: "Products API"
+        description: "Products API for NodeJS AWS GMP"
+        contact:
+          name: "Yahor Sheinikau"
+          url: "https://github.com/naooki"
+          email: "sheynikovea@gmail.com"
+    resources:
+      - path: "products"
+        description: "This is the description for some/path"
+      - path: "products/productId"
+        description: "This is the description for some/other/path"
+    models:
+      - name: "Product"
+        description: "Product model"
+        contentType: "application/json"
+        schema: ${file(src/models/product.schema.json)}
+      - name: "ErrorResponse"
+        description: "Generic error response"
+        contentType: "application/json"
+        schema:
+          type: "object"
+          properties:
+            message:
+              type: "string"
+            statusCode:
+              type: "integer"
+      - name: "GetProductsResponse"
+        description: "Get Products Response Model"
+        contentType: "application/json"
+        schema:
+          type: "object"
+          properties:
+            message:
+              type: "string"
+            statusCode:
+              type: "integer"
+            product:
+              type: "array"
+              items:
+                $ref: "{{model: Product}}"
+      - name: "GetProductResponse"
+        description: "Get Product Response Model"
+        contentType: "application/json"
+        schema:
+          type: "object"
+          properties:
+            message:
+              type: "string"
+            statusCode:
+              type: "integer"
+            product:
+              $ref: "{{model: Product}}"
+
+plugins:
+  - serverless-webpack
+  - serverless-aws-documentation
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  lambdaHashingVersion: 20201221
+
+functions:
+  getProductById:
+    handler: src/handlers/index.getProductByIdHandler
+    events:
+      - http:
+          method: get
+          path: products/{productId}
+          documentation:
+            summary: "Get Product By ID"
+            description: "Returns a product by ID"
+            pathParams:
+              - name: "productId"
+                required: true
+                description: "The ID of the Product to find"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "OK"
+                responseModels:
+                  "application/json": "GetProductResponse"
+              - statusCode: "404"
+                responseBody:
+                  description: "Not Found"
+                responseModels:
+                  "application/json": "ErrorResponse"
+              - statusCode: "400"
+                responseBody:
+                  description: "Error"
+                responseModels:
+                  "application/json": "ErrorResponse"
+  getProductsList:
+    handler: src/handlers/index.getProductsListHandler
+    events:
+      - http:
+          method: get
+          path: products
+          documentation:
+            summary: "Get Products"
+            description: "Returns a list of porducts"
+            queryParams:
+              - name: "limit"
+                description: "The limit number of items to return"
+              - name: "search"
+                description: "The string to search for in item titles"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "OK"
+                responseModels:
+                  "application/json": "GetProductsResponse"
+              - statusCode: "400"
+                responseBody:
+                  description: "Error"
+                responseModels:
+                  "application/json": "ErrorResponse"
