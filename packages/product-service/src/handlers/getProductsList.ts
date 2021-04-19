@@ -12,9 +12,18 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
     "Access-Control-Allow-Origin": "*",
   };
 
+  console.log(`Get products: Params: ${JSON.stringify(params)}`);
+
   try {
+    if (params.limit && !+params.limit) {
+      throw new Error('Invalid request params.');
+    }
+
     const products = await getProducts(params);
     const statusCode = 200;
+
+    console.log('Found products: ', JSON.stringify(products));
+
     return {
       statusCode,
       headers,
@@ -28,7 +37,9 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
         2
       ),
     };
-  } catch ({ err, params }) {
+  } catch (e) {
+    console.error(`Error: ${e}`);
+
     const statusCode = 500;
 
     return {
@@ -38,7 +49,7 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
         {
           message: "Error",
           statusCode,
-          err,
+          err: e.err,
           params,
         },
         null,

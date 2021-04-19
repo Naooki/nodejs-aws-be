@@ -12,8 +12,16 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
     "Access-Control-Allow-Origin": "*",
   };
 
+  console.log(`Get product - productId: ${productId}`);  
+
   try {
+    if (!productId) {
+      throw new Error('ProductId is not provided.');
+    }
+
     const product = await getProductById(productId);
+
+    console.log('Found product: ', JSON.stringify(product));
 
     if (product) {
       const statusCode = 200;
@@ -46,6 +54,8 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
       };
     }
   } catch (err) {
+    console.error('Error: ', err);
+
     const statusCode = 500;
 
     return {
@@ -54,6 +64,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
       body: JSON.stringify(
         {
           message: "Error",
+          err,
           statusCode,
         },
         null,
