@@ -5,7 +5,9 @@ export class ProductRepository {
     const dbClient = new DbClient();
     await dbClient.connect();
 
-    const res = await dbClient.query(`select * from products where id = '${id}'`);
+    const res = await dbClient.query(
+      `select products.id, title, description, price, count from products LEFT JOIN stocks ON stocks.product_id = products.id where products.id = '${id}'`
+    );
 
     dbClient.end();
     return res.rows;
@@ -15,10 +17,10 @@ export class ProductRepository {
     const dbClient = new DbClient();
     await dbClient.connect();
 
-    let query = `select * from products`;
+    let query = `select products.id, title, description, price, count from products LEFT JOIN stocks ON stocks.product_id = products.id`;
 
     if (search) {
-      query += ` as "Product" where "Product"."title" like '%${search}%'`;
+      query += ` where products.title like '%${search}%'`;
     }
     if (limit) {
       query += ` LIMIT ${limit}`;
