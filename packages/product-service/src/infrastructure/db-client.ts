@@ -19,6 +19,7 @@ export class DbClient {
     console.log(`Connecting to: ${this._client.host}, database: ${this._client.database}...`);
     await this._client.connect();
     console.log('Connected!');
+    return this._client;
   }
 
   async query(query: string) {

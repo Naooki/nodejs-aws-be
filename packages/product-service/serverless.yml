@@ -132,3 +132,12 @@ functions:
                   description: "Error"
                 responseModels:
                   "application/json": "ErrorResponse"
+  createProduct:
+    handler: src/handlers/index.createProductHandler
+    events:
+      - http:
+          method: post
+          path: products
+          documentation:
+            summary: "Create Product"
+            description: "Creates a product and returns it in response"

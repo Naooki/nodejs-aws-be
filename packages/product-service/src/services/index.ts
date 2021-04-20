@@ -9,3 +9,7 @@ export async function getProductById(id: string) {
 export async function getProducts(params: { search?: string, limit?: number }) {
   return productsRepo.findAll(params);
 }
+
+export async function createProduct(productData: any) {
+  return productsRepo.create(productData);
+}
