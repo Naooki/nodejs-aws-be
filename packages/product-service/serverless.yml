@@ -136,7 +136,7 @@ functions:
     handler: src/handlers/index.createProductHandler
     events:
       - http:
-          method: post
+          method: put
           path: products
           documentation:
             summary: "Create Product"
