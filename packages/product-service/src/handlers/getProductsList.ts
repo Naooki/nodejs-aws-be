@@ -1,23 +1,40 @@
+import Ajv, { JSONSchemaType } from "ajv";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
 
 import { getProducts } from "src/services";
 
+const ajv = new Ajv({ allErrors: true });
+const schema: JSONSchemaType<{ search?: string, limit?: number }> = {
+  type: "object",
+  properties: {
+    search: { type: "string" },
+    limit: { type: "number", minimum: 1 }
+  },
+  additionalProperties: false,
+};
+const validate = ajv.compile(schema);
+
 export const getProductsListHandler: APIGatewayProxyHandler = async (
   event,
   _context
 ) => {
-  const params = event.queryStringParameters || {};
+  const params: { search?: string, limit?: number } = {};
+  if (event.queryStringParameters?.search) {
+    params.search = event.queryStringParameters?.search;
+  }
+
+  if (event.queryStringParameters?.limit) {
+    params.limit = +event.queryStringParameters.limit;
+  }
+
   const headers = {
     "Access-Control-Allow-Origin": "*",
   };
 
-  console.log(`Get products: Params: ${JSON.stringify(params)}`);
-
-  // TODO: move to validator
-  if (params.limit && !+params.limit) {
+  if (!validate(params)) {
     const statusCode = 400;
-    const message = `Error: Invalid query params: ${JSON.stringify(params)}`;
+    const message = 'Validation Error';
     console.log(message);
 
     return {
@@ -27,13 +44,15 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
         {
           message,
           statusCode,
-          params,
+          errors: validate.errors,
         },
         null,
         2
       ),
     };
   }
+
+  console.log(`Get products: Params: ${JSON.stringify(params)}`);
 
   try {
     const products = await getProducts(params);

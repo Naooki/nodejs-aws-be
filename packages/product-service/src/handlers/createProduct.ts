@@ -1,7 +1,23 @@
+import Ajv, { JSONSchemaType } from "ajv";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
 
+import { ProductCreateDto } from "src/interfaces/Product";
 import { createProduct } from "src/services";
+
+const ajv = new Ajv({ allErrors: true });
+const schema: JSONSchemaType<ProductCreateDto> = {
+  type: "object",
+  properties: {
+    title: { type: "string", nullable: false, minLength: 1 },
+    description: { type: "string" },
+    price: { type: "number", minimum: 0, nullable: false },
+    count: { type: "number", minimum: 0, nullable: true }
+  },
+  required: ["title", "description", "price"],
+  additionalProperties: false,
+};
+const validate = ajv.compile(schema);
 
 export const createProductHandler: APIGatewayProxyHandler = async (
   event,
@@ -14,10 +30,9 @@ export const createProductHandler: APIGatewayProxyHandler = async (
 
   console.log(`Create product: ${JSON.stringify(productData)}`);  
 
-  // TODO: VALIDATE
-  if (false) {
+  if (!validate(productData)) {
     const statusCode = 400;
-    const message = `Error: Invalid product data!`;
+    const message = `Validation Error`;
     console.log(message);
 
     return {
@@ -27,6 +42,7 @@ export const createProductHandler: APIGatewayProxyHandler = async (
         {
           message,
           statusCode,
+          err: validate.errors
         },
         null,
         2
