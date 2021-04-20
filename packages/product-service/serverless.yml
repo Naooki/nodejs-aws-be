@@ -84,6 +84,7 @@ functions:
       - http:
           method: get
           path: products/{productId}
+          cors: true
           documentation:
             summary: "Get Product By ID"
             description: "Returns a product by ID"
@@ -113,6 +114,7 @@ functions:
       - http:
           method: get
           path: products
+          cors: true
           documentation:
             summary: "Get Products"
             description: "Returns a list of porducts"
@@ -138,6 +140,7 @@ functions:
       - http:
           method: put
           path: products
+          cors: true
           documentation:
             summary: "Create Product"
             description: "Creates a product and returns it in response"
