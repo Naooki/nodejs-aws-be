@@ -14,11 +14,27 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
 
   console.log(`Get product - productId: ${productId}`);  
 
-  try {
-    if (!productId) {
-      throw new Error('ProductId is not provided.');
-    }
+  // TODO: move to validator
+  if (!productId) {
+    const statusCode = 400;
+    const message = `Error: Missing productId!`;
+    console.log(message);
 
+    return {
+      statusCode,
+      headers,
+      body: JSON.stringify(
+        {
+          message,
+          statusCode,
+        },
+        null,
+        2
+      ),
+    };
+  }
+  
+  try {
     const product = await getProductById(productId);
 
     console.log('Found product: ', JSON.stringify(product));

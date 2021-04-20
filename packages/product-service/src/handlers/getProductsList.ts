@@ -14,11 +14,28 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
 
   console.log(`Get products: Params: ${JSON.stringify(params)}`);
 
-  try {
-    if (params.limit && !+params.limit) {
-      throw new Error('Invalid request params.');
-    }
+  // TODO: move to validator
+  if (params.limit && !+params.limit) {
+    const statusCode = 400;
+    const message = `Error: Invalid query params: ${JSON.stringify(params)}`;
+    console.log(message);
 
+    return {
+      statusCode,
+      headers,
+      body: JSON.stringify(
+        {
+          message,
+          statusCode,
+          params,
+        },
+        null,
+        2
+      ),
+    };
+  }
+
+  try {
     const products = await getProducts(params);
     const statusCode = 200;
 
