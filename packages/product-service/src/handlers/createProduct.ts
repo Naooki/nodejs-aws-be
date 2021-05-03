@@ -1,31 +1,36 @@
+import Ajv, { JSONSchemaType } from "ajv";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
-import Ajv, { JSONSchemaType } from "ajv";
-import addFormats from "ajv-formats";
 
-import { getProductById } from "src/services";
+import { ProductCreateDto } from "src/interfaces/Product";
+import { createProduct } from "src/services";
 
 const ajv = new Ajv({ allErrors: true });
-addFormats(ajv);
-const schema: JSONSchemaType<{ productId: string }> = {
+const schema: JSONSchemaType<ProductCreateDto> = {
   type: "object",
   properties: {
-    productId: { type: "string", format: "uuid", nullable: false },
+    title: { type: "string", nullable: false, minLength: 1 },
+    description: { type: "string" },
+    price: { type: "number", minimum: 0, nullable: false },
+    count: { type: "number", minimum: 0, nullable: true }
   },
-  required: ["productId"],
+  required: ["title", "description", "price"],
   additionalProperties: false,
 };
 const validate = ajv.compile(schema);
 
-export const getProductByIdHandler: APIGatewayProxyHandler = async (
+export const createProductHandler: APIGatewayProxyHandler = async (
   event,
   _context
 ) => {
+  const productData = JSON.parse(event.body);
   const headers = {
     "Access-Control-Allow-Origin": "*",
   };
 
-  if (!validate(event.pathParameters)) {
+  console.log(`Create product: ${JSON.stringify(productData)}`);  
+
+  if (!validate(productData)) {
     const statusCode = 400;
     const message = `Validation Error`;
     console.log(message);
@@ -37,7 +42,7 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
         {
           message,
           statusCode,
-          errors: validate.errors,
+          err: validate.errors
         },
         null,
         2
@@ -45,12 +50,10 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
     };
   }
 
-  const { productId } = event.pathParameters;
-  console.log(`Get product - productId: ${productId}`);
   try {
-    const product = await getProductById(productId);
+    const product = await createProduct(productData);
 
-    console.log("Found product: ", JSON.stringify(product));
+    console.log('Created product: ', JSON.stringify(product));
 
     if (product) {
       const statusCode = 200;
@@ -67,23 +70,9 @@ export const getProductByIdHandler: APIGatewayProxyHandler = async (
           2
         ),
       };
-    } else {
-      const statusCode = 404;
-      return {
-        statusCode,
-        headers,
-        body: JSON.stringify(
-          {
-            message: "Product Not Found",
-            statusCode,
-          },
-          null,
-          2
-        ),
-      };
     }
   } catch (err) {
-    console.error("Error: ", err);
+    console.error('Error: ', err);
 
     const statusCode = 500;
 

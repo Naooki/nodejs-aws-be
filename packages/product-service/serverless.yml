@@ -75,6 +75,11 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    # PG_HOST:
+    # PG_PORT:
+    # PG_DATABASE:
+    # PG_USERNAME:
+    # PG_PASSWORD:
   lambdaHashingVersion: 20201221
 
 functions:
@@ -84,6 +89,7 @@ functions:
       - http:
           method: get
           path: products/{productId}
+          cors: true
           documentation:
             summary: "Get Product By ID"
             description: "Returns a product by ID"
@@ -113,6 +119,7 @@ functions:
       - http:
           method: get
           path: products
+          cors: true
           documentation:
             summary: "Get Products"
             description: "Returns a list of porducts"
@@ -132,3 +139,13 @@ functions:
                   description: "Error"
                 responseModels:
                   "application/json": "ErrorResponse"
+  createProduct:
+    handler: src/handlers/index.createProductHandler
+    events:
+      - http:
+          method: put
+          path: products
+          cors: true
+          documentation:
+            summary: "Create Product"
+            description: "Creates a product and returns it in response"

@@ -1,20 +1,15 @@
-import productList from "./productsList.json";
+import { ProductRepository } from "src/data-access";
 
-export function getProductById(id: string) {
-  const product = productList.find((product) => id === product.id);
-  return Promise.resolve(product);
+const productsRepo = new ProductRepository();
+
+export async function getProductById(id: string) {
+  return productsRepo.findById(id);
 }
 
-export function getProducts(params: { [key: string]: string }) {
-  let result = productList;
+export async function getProducts(params: { search?: string, limit?: number }) {
+  return productsRepo.findAll(params);
+}
 
-  if (params.search) {
-    result = result.filter(item => item.title.indexOf(params.search) !== -1);
-  }
-
-  if (params.limit && +params.limit) {
-    result = result.slice(0, +params.limit);
-  }
-
-  return Promise.resolve(result);
+export async function createProduct(productData: any) {
+  return productsRepo.create(productData);
 }
