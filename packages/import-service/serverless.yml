@@ -18,14 +18,14 @@ provider:
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
-    UPLOAD_BUCKET: products-upload-bucket
+    uploadBucket: products-upload-bucket
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
   lambdaHashingVersion: 20201221
-  # iamRoleStatements:
-  #   - Effect: "Allow"
-  #     Action:
-  #       - "s3:*"
-  #     Resource: "arn:aws:s3:::products-upload-bucket/*"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::products-upload-bucket/*"
 
 functions:
   importProductFile:
@@ -35,3 +35,12 @@ functions:
           path: import
           method: get
           cors: true
+  importFileParser:
+    handler: src/handlers/index.importFileParserHandler
+    events:
+      - s3:
+          bucket: products-upload-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded
+          existing: true
