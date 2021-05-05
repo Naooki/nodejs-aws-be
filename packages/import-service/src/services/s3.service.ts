@@ -26,18 +26,20 @@ export class S3Service {
   async moveToParsed({ Bucket, Key }: S3.GetObjectRequest) {
     const fileBaseName = path.basename(Key);
 
+    const encoded = encodeURIComponent(fileBaseName);
+
     const copyParams = {
       Bucket,
-      CopySource: `${Bucket}/uploaded/${fileBaseName}`,
+      CopySource: `${Bucket}/uploaded/${encoded}`,
       Key: `parsed/${fileBaseName}`,
     };
 
     console.log('Copying object with params: ', JSON.stringify(copyParams));
-    await s3.copyObject(copyParams);
+    await s3.copyObject(copyParams).promise();
     console.log('Copied');
 
     console.log('Deleting object with params: ', JSON.stringify({ Bucket, Key }));
-    await s3.deleteObject({ Bucket, Key });
+    await s3.deleteObject({ Bucket, Key }).promise();
     console.log('Deleted');
   }
 }
