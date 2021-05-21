@@ -6,6 +6,8 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  # sqsArn
+  # sqsUrl
 
 plugins:
   - serverless-webpack
@@ -26,6 +28,10 @@ provider:
       Action:
         - "s3:*"
       Resource: "arn:aws:s3:::products-upload-bucket/*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource: ${self:custom.sqsArn}
 
 functions:
   importProductFile:
@@ -44,3 +50,5 @@ functions:
           rules:
             - prefix: uploaded
           existing: true
+    environment:
+      sqsUrl: ${self:custom.sqsUrl}

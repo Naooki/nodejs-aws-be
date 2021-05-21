@@ -1,7 +1,8 @@
-import { S3Handler } from "aws-lambda";
 import { S3Service } from "src/services/s3.service";
+import { SQSService } from "src/services/sqs.service";
 
 const s3Service = new S3Service();
+const sqsService = new SQSService();
 
 export const importFileParserHandler = async (event) => {
   const Bucket = event.Records[0].s3.bucket.name;
@@ -16,14 +17,18 @@ export const importFileParserHandler = async (event) => {
     "Access-Control-Allow-Origin": "*",
   };
   try {
-    await s3Service.parseCsvFile({ Bucket, Key });
-    await s3Service.moveToParsed({ Bucket, Key });
+    const entries = await s3Service.parseCsvFile({ Bucket, Key });
+
+    const sendMessages = sqsService.sendItems(entries);
+    const moveToParsed = s3Service.moveToParsed({ Bucket, Key });
+    await Promise.all([sendMessages, moveToParsed]);
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        message: 'Success',
-      })
+        message: "Success",
+      }),
     };
   } catch (err) {
     console.log("Finishing handling with error: ", err);
@@ -32,7 +37,7 @@ export const importFileParserHandler = async (event) => {
       headers,
       body: JSON.stringify({
         error: err,
-      })
+      }),
     };
   }
 };
