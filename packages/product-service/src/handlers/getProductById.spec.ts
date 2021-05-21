@@ -8,9 +8,14 @@ jest.mock("src/services", () => ({
 }));
 
 describe("getProductById", () => {
+  beforeEach(() => {
+    console.log = jest.fn();
+    console.error = jest.fn();
+  });
+
   it("should return 200 response and the product data when the product exists", async () => {
     const event: APIGatewayProxyEvent = {
-      pathParameters: { productId: "test-product-id" },
+      pathParameters: { productId: "5070661a-b85a-48d4-9a47-7882d85ff1b2" },
     } as any;
 
     (getProductById as jest.Mock).mockResolvedValueOnce({ title: "test-product" });
@@ -26,7 +31,7 @@ describe("getProductById", () => {
 
   it("should return 404 error when the product not found", async () => {
     const event: APIGatewayProxyEvent = {
-      pathParameters: { productId: "test-product-id" },
+      pathParameters: { productId: "5070661a-b85a-48d4-9a47-7882d85ff1b2" },
     } as any;
 
     (getProductById as jest.Mock).mockResolvedValueOnce(null);
@@ -41,7 +46,7 @@ describe("getProductById", () => {
 
   it("should return 400 error when service fails", async () => {
     const event: APIGatewayProxyEvent = {
-      pathParameters: { productId: "test-product-id" },
+      pathParameters: { productId: "5070661a-b85a-48d4-9a47-7882d85ff1b2" },
     } as any;
 
     (getProductById as jest.Mock).mockRejectedValueOnce(null);
@@ -49,6 +54,7 @@ describe("getProductById", () => {
     const resp: any = await getProductByIdHandler(event, null, null);
     const body = JSON.parse(resp.body);
     expect(body).toEqual({
+      err: null,
       message: "Error",
       statusCode: 500,
     });

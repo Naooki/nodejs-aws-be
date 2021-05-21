@@ -8,6 +8,11 @@ jest.mock("src/services", () => ({
 }));
 
 describe("getProducts", () => {
+  beforeEach(() => {
+    console.log = jest.fn();
+    console.error = jest.fn();
+  });
+
   it("should return 200 response and the products", async () => {
     const event: APIGatewayProxyEvent = {
       queryStringParameters: {},

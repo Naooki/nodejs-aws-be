@@ -69,7 +69,7 @@ export const getProductsListHandler: APIGatewayProxyHandler = async (
       ),
     };
   } catch (e) {
-    console.error(`Error: ${e}`);
+    console.error(`Error: ${JSON.stringify(e)}`);
 
     const statusCode = 500;
 

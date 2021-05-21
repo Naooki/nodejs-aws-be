@@ -1,11 +1,13 @@
 import Ajv from "ajv";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
+import addFormats from "ajv-formats";
 
 import { createProduct } from "src/services";
 import { createProductSchema } from "src/schemas";
 
 const ajv = new Ajv({ allErrors: true });
+addFormats(ajv);
 const validate = ajv.compile(createProductSchema);
 
 export const createProductHandler: APIGatewayProxyHandler = async (
