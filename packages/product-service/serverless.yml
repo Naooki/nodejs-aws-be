@@ -194,5 +194,13 @@ resources:
       Type: AWS::SNS::Subscription
       Properties:
         Protocol: email
-        Endpoint: yahor_sheinikau@epam.com
+        Endpoint: example0.test.com # MANAGER_EMAIL
         TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy: { "count": [{ "numeric": ["<", 40] }] }
+    createProductBigCountSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Protocol: email
+        Endpoint: example1.test.com # SENIOR_MANAGER_EMAIL
+        TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy: { "count": [{ "numeric": [">=", 40] }] }

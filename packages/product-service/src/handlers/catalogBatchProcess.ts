@@ -40,18 +40,21 @@ export const catalogBatchProcessHandler: SQSHandler = async (event) => {
   }
 
   try {
-    const isLast = event.Records.find(
-      (rec) =>
-        rec.messageAttributes.messageAttr &&
-        rec.messageAttributes.messageAttr.stringValue === "last"
+    const topicArn = process.env.snsArn;
+    console.log(`Sending email notification: ${topicArn}`);
+    const subject = "Product successfully created.";
+    const message = "Product have been successfully added to the table.";
+
+    const snsMsgs = products.map((product) =>
+      snsService.publishMessage(topicArn, subject, message, {
+        count: {
+          DataType: "Number",
+          StringValue: product.count ? product.count.toString() : "0",
+        },
+      })
     );
-    if (isLast) {
-      const topicArn = process.env.snsArn;
-      console.log(`Sending email notification: ${topicArn}`);
-      const subject = "Products successfully created.";
-      const message = "Products have been successfully added to the table.";
-      await snsService.publishMessage(topicArn, subject, message);
-    }
+
+    await Promise.all(snsMsgs);
   } catch (err) {
     console.log(err);
   }
