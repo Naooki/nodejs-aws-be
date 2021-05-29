@@ -11,13 +11,15 @@
   },
   "dependencies": {
     "csv-parser": "^3.0.0",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.23.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.25",
+    "@types/uuid": "^8.3.0",
     "jest": "^26.6.3",
     "serverless": "^2.23.0",
     "serverless-aws-documentation": "^1.1.0",

@@ -13,3 +13,7 @@ export async function getProducts(params: { search?: string, limit?: number }) {
 export async function createProduct(productData: any) {
   return productsRepo.create(productData);
 }
+
+export async function createProductsBatch(productsData: any[]) {
+  return productsRepo.createMany(productsData);
+}

@@ -1,23 +1,14 @@
-import Ajv, { JSONSchemaType } from "ajv";
+import Ajv from "ajv";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
+import addFormats from "ajv-formats";
 
-import { ProductCreateDto } from "src/interfaces/Product";
 import { createProduct } from "src/services";
+import { createProductSchema } from "src/schemas";
 
 const ajv = new Ajv({ allErrors: true });
-const schema: JSONSchemaType<ProductCreateDto> = {
-  type: "object",
-  properties: {
-    title: { type: "string", nullable: false, minLength: 1 },
-    description: { type: "string" },
-    price: { type: "number", minimum: 0, nullable: false },
-    count: { type: "number", minimum: 0, nullable: true }
-  },
-  required: ["title", "description", "price"],
-  additionalProperties: false,
-};
-const validate = ajv.compile(schema);
+addFormats(ajv);
+const validate = ajv.compile(createProductSchema);
 
 export const createProductHandler: APIGatewayProxyHandler = async (
   event,

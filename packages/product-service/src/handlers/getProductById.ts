@@ -1,21 +1,14 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import "source-map-support/register";
-import Ajv, { JSONSchemaType } from "ajv";
+import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
 import { getProductById } from "src/services";
+import { getProductByIdSchema } from "src/schemas";
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
-const schema: JSONSchemaType<{ productId: string }> = {
-  type: "object",
-  properties: {
-    productId: { type: "string", format: "uuid", nullable: false },
-  },
-  required: ["productId"],
-  additionalProperties: false,
-};
-const validate = ajv.compile(schema);
+const validate = ajv.compile(getProductByIdSchema);
 
 export const getProductByIdHandler: APIGatewayProxyHandler = async (
   event,

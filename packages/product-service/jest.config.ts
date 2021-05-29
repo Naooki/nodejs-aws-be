@@ -3,6 +3,7 @@ export default {
   testEnvironment: "node",
   moduleNameMapper: {
     "src/services": "<rootDir>/src/services/index.ts",
+    "src/schemas": "<rootDir>/src/schemas/index.ts",
     "src/getProductById": "<rootDir>/src/handlers/index.ts",
     "src/getProductList": "<rootDir>/src/handlers/index.ts",
   }
