@@ -1,0 +1,31 @@
+service: authorization-service
+
+frameworkVersion: "2"
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  login: naooki
+
+
+plugins:
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  lambdaHashingVersion: 20201221
+
+functions:
+  basicAuthorizer:
+    handler: src/handlers/index.basicAuthorizerHandler
+    environment:
+      username: ${self:custom.login}
+      password: ${env:${self:custom.login}}

@@ -6,12 +6,12 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
-  # sqsArn
-  # sqsUrl
+  sqsName: catalogItemsQueue
 
 plugins:
   - serverless-webpack
   - serverless-aws-documentation
+  - serverless-pseudo-parameters
 
 provider:
   name: aws
@@ -31,7 +31,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:SendMessage"
-      Resource: ${self:custom.sqsArn}
+      Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:${self:custom.sqsName}"
 
 functions:
   importProductFile:
@@ -41,6 +41,12 @@ functions:
           path: import
           method: get
           cors: true
+          authorizer:
+            name: requestAuthorizer
+            identitySource: method.request.header.Authorization
+            type: token
+            resultTtlInSeconds: 0
+            arn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-dev-basicAuthorizer"
   importFileParser:
     handler: src/handlers/index.importFileParserHandler
     events:
@@ -51,4 +57,17 @@ functions:
             - prefix: uploaded
           existing: true
     environment:
-      sqsUrl: ${self:custom.sqsUrl}
+      sqsUrl: "https://sqs.#{AWS::Region}.amazonaws.com/#{AWS::AccountId}/${self:custom.sqsName}"
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
